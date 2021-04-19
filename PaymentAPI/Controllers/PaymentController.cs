@@ -2,6 +2,7 @@
 using Essensoft.AspNetCore.Payment.WeChatPay.V2;
 using Essensoft.AspNetCore.Payment.WeChatPay.V2.Notify;
 using Essensoft.AspNetCore.Payment.WeChatPay.V2.Request;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -21,7 +22,7 @@ namespace PaymentAPI.Controllers
     [ApiController]
     [ApiExplorerSettings(GroupName = "pay")]
     [Route("v1/api/[Controller]/[action]")]
-    //[Authorize]
+    [Authorize]
     public class PaymentController : ControllerBase
     {
         private readonly ILogger<PaymentController> _logger;
@@ -46,7 +47,7 @@ namespace PaymentAPI.Controllers
                 Body = content,
                 OutTradeNo = "5363471-" + dt.ToString("yyyyMMddHHmmssfff"),
                 TotalFee = amount,
-                NotifyUrl = "http://xs-test.natapp1.cc/v1/api/payment/post_notify_by_webchat",
+                NotifyUrl = "http://106.15.88.18/v1/api/payment/post_notify_by_webchat",
                 TradeType = "NATIVE",
                 TimeExpire= dt.AddHours(2).ToString("yyyyMMddHHmmss")
             };
@@ -54,6 +55,7 @@ namespace PaymentAPI.Controllers
             var bitmap = QRCoderHelper.GetPTQRCode(response?.CodeUrl, 5);
             MemoryStream ms = new MemoryStream();
             bitmap.Save(ms, ImageFormat.Jpeg);
+            _logger.LogInformation($"二维码生成成功,商户订单:{request.OutTradeNo}");
             return File(new MemoryStream(ms.GetBuffer()), "image/jpeg", HttpUtility.UrlEncode("pay_pic", Encoding.GetEncoding("UTF-8")));
         }
 
@@ -69,7 +71,7 @@ namespace PaymentAPI.Controllers
                 {
                     if (notify.ResultCode == "SUCCESS")
                     {
-                        Console.WriteLine("OutTradeNo: " + notify.OutTradeNo);
+                        _logger.LogInformation($"商户订单:{notify.OutTradeNo},支付成功");
                         return WeChatPayNotifyResult.Success;
                     }
                 }
