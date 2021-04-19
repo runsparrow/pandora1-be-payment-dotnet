@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PaymentAPI</name>
+    </assembly>
+    <members>
+        <member name="M:PaymentAPI.Helpers.ServiceException.#ctor(PaymentAPI.Helpers.ErrorDescriptor)">
+            <param name="descriptor"></param>
+        </member>
+    </members>
+</doc>
