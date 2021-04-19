@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,7 +23,14 @@ namespace PaymentAPI
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>()
+                     .ConfigureLogging((hostingContext, builder) =>
+                     {
+                         builder.AddFilter("System", LogLevel.Error);
+                         builder.AddFilter("Microsoft", LogLevel.Error);
+                         var path = Path.Combine(Directory.GetCurrentDirectory(), "log4net.config");
+                         builder.AddLog4Net(path);
+                     }); ;
                 });
     }
 }

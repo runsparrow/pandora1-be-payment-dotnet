@@ -47,7 +47,7 @@ namespace PaymentAPI.Controllers
                 Body = content,
                 OutTradeNo = "5363471-" + dt.ToString("yyyyMMddHHmmssfff"),
                 TotalFee = amount,
-                NotifyUrl = "http://106.15.88.18/v1/api/payment/post_notify_by_webchat",
+                NotifyUrl = "http://106.15.88.18:8005/v1/api/payment/post_notify_by_webchat",
                 TradeType = "NATIVE",
                 TimeExpire= dt.AddHours(2).ToString("yyyyMMddHHmmss")
             };
