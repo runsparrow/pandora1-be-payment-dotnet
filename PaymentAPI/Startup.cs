@@ -1,4 +1,5 @@
 using Autofac;
+using Essensoft.AspNetCore.Payment.WeChatPay;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -47,6 +48,8 @@ namespace PaymentAPI
             services.AddCorsSetup();
             services.AddSwaggerSetup();
             services.AddAuthorizationSetup();
+            services.AddWeChatPay();
+            services.Configure<WeChatPayOptions>(Configuration.GetSection("WeChatPay"));
             services.AddControllers(options =>
             {
                 options.Filters.Add<GlobalExceptionsFilter>();

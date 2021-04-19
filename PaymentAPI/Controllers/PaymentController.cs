@@ -45,7 +45,7 @@ namespace PaymentAPI.Controllers
                 Body = content,
                 OutTradeNo = "5363471-" + DateTime.Now.ToString("yyyyMMddHHmmssfff"),
                 TotalFee = amount,
-                NotifyUrl = "http://xs-test.natapp1.cc/v1/api/pay/post_notify_by_webchat",
+                NotifyUrl = "http://xs-test.natapp1.cc/v1/api/payment/post_notify_by_webchat",
                 TradeType = "NATIVE"
             };
             var response = await _clientWebChat.ExecuteAsync(request, _optionsWebChatAccessor.Value);
