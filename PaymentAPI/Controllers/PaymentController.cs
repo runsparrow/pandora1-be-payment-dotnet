@@ -48,7 +48,7 @@ namespace PaymentAPI.Controllers
                 TotalFee = amount,
                 NotifyUrl = "http://xs-test.natapp1.cc/v1/api/payment/post_notify_by_webchat",
                 TradeType = "NATIVE",
-                TimeExpire= dt.AddMinutes(1).ToString("yyyyMMddHHmmss")
+                TimeExpire= dt.AddHours(2).ToString("yyyyMMddHHmmss")
             };
             var response = await _clientWebChat.ExecuteAsync(request, _optionsWebChatAccessor.Value);
             var bitmap = QRCoderHelper.GetPTQRCode(response?.CodeUrl, 5);
