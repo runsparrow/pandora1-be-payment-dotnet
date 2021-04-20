@@ -41,6 +41,7 @@ namespace PaymentAPI.Controllers
         [HttpPost]
         public async Task<FileStreamResult> Pay_By_WebChat(int amount,string content)
         {
+            ClaimEntity user = TokenHelp.GetUserInfo(HttpContext.Request.Headers["Authorization"]);
             DateTime dt = DateTime.Now;
             var request = new WeChatPayUnifiedOrderRequest
             {
@@ -55,7 +56,7 @@ namespace PaymentAPI.Controllers
             var bitmap = QRCoderHelper.GetPTQRCode(response?.CodeUrl, 5);
             MemoryStream ms = new MemoryStream();
             bitmap.Save(ms, ImageFormat.Jpeg);
-            _logger.LogInformation($"二维码生成成功,商户订单:{request.OutTradeNo}");
+            _logger.LogInformation($"用户ID:{user.Id},用户名:{user.Name}发起支付,二维码生成成功,商户订单:{request.OutTradeNo}");
             return File(new MemoryStream(ms.GetBuffer()), "image/jpeg", HttpUtility.UrlEncode("pay_pic", Encoding.GetEncoding("UTF-8")));
         }
 
@@ -64,7 +65,6 @@ namespace PaymentAPI.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Post_Notify_By_Webchat()
         {
-
             try
             {
                 var notify = await _clientNofityWebChat.ExecuteAsync<WeChatPayUnifiedOrderNotify>(Request, _optionsWebChatAccessor.Value);
