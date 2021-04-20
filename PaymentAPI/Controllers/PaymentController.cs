@@ -60,6 +60,7 @@ namespace PaymentAPI.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Post_Notify_By_Webchat()
         {
