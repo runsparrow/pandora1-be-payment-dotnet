@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace PaymentAPI
@@ -23,7 +24,15 @@ namespace PaymentAPI
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>()
+                    webBuilder
+                    //.UseKestrel(options =>
+                    //{
+                    //    options.Listen(IPAddress.Any, 8005, listenOptions =>
+                    //    {
+                    //        listenOptions.UseHttps("fourlifecode-com-iis-0421170611.pfx", "fourlifecode");
+                    //    });
+                    //})
+                    .UseStartup<Startup>()
                      .ConfigureLogging((hostingContext, builder) =>
                      {
                          builder.AddFilter("System", LogLevel.Error);

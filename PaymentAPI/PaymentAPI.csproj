@@ -27,6 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="fourlifecode-com-iis-0421170611.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="PaymentAPI.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
