@@ -25,13 +25,13 @@ namespace PaymentAPI
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
-                    //.UseKestrel(options =>
-                    //{
-                    //    options.Listen(IPAddress.Any, 8005, listenOptions =>
-                    //    {
-                    //        listenOptions.UseHttps("fourlifecode-com-iis-0421170611.pfx", "fourlifecode");
-                    //    });
-                    //})
+                    .UseKestrel(options =>
+                    {
+                        options.Listen(IPAddress.Any, 8005, listenOptions =>
+                        {
+                            listenOptions.UseHttps("webapi-xs-com-iis-0505161240.pfx", "fourlifecode");
+                        });
+                    })
                     .UseStartup<Startup>()
                      .ConfigureLogging((hostingContext, builder) =>
                      {
