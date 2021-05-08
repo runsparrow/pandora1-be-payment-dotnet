@@ -9,10 +9,8 @@ using Microsoft.Extensions.Options;
 using PaymentAPI.Helpers;
 using PaymentAPI.Models.Dto;
 using System;
-using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -56,7 +54,7 @@ namespace PaymentAPI.Controllers
             var bitmap = QRCoderHelper.GetPTQRCode(response?.CodeUrl, 5);
             MemoryStream ms = new MemoryStream();
             bitmap.Save(ms, ImageFormat.Jpeg);
-            _logger.LogInformation($"用户ID:{user.Id},用户名:{user.Name}发起支付,二维码生成成功,商户订单:{request.OutTradeNo}");
+            _logger.LogInformation($"用 户 ID:{user.Id},用户名:{user.Name}发起支付,二维码生成成功,商户订单:{request.OutTradeNo}");
             return File(new MemoryStream(ms.GetBuffer()), "image/jpeg", HttpUtility.UrlEncode("pay_pic", Encoding.GetEncoding("UTF-8")));
         }
 
