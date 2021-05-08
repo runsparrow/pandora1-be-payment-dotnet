@@ -54,7 +54,6 @@ namespace PaymentAPI.Controllers
                 TimeExpire= dt.AddHours(2).ToString("yyyyMMddHHmmss")
             };
             var response = await _clientWebChat.ExecuteAsync(request, _optionsWebChatAccessor.Value);
-            _logger.LogInformation(JsonConvert.SerializeObject(response));
             var bitmap = QRCoderHelper.GetPTQRCode(response?.CodeUrl, 5);
             MemoryStream ms = new MemoryStream();
             bitmap.Save(ms, ImageFormat.Jpeg);
