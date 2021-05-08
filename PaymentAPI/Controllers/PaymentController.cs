@@ -41,6 +41,7 @@ namespace PaymentAPI.Controllers
         [HttpPost]
         public async Task<FileStreamResult> Pay_By_WebChat(int amount,string content)
         {
+            _logger.LogInformation($"经过这里1");
             ClaimEntity user = TokenHelp.GetUserInfo(HttpContext.Request.Headers["Authorization"]);
             DateTime dt = DateTime.Now;
             var request = new WeChatPayUnifiedOrderRequest
@@ -53,6 +54,7 @@ namespace PaymentAPI.Controllers
                 TimeExpire= dt.AddHours(2).ToString("yyyyMMddHHmmss")
             };
             var response = await _clientWebChat.ExecuteAsync(request, _optionsWebChatAccessor.Value);
+            _logger.LogInformation($"经过这里2");
             var bitmap = QRCoderHelper.GetPTQRCode(response?.CodeUrl, 5);
             MemoryStream ms = new MemoryStream();
             bitmap.Save(ms, ImageFormat.Jpeg);
