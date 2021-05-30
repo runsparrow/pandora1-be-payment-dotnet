@@ -4,6 +4,35 @@
         <name>PaymentAPI</name>
     </assembly>
     <members>
+        <member name="M:PaymentAPI.Helpers.SerializeHelper.Serialize(System.Object)">
+            <summary>
+            序列化
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PaymentAPI.Helpers.SerializeHelper.Deserialize``1(System.Byte[])">
+            <summary>
+            反序列化
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PaymentAPI.Helpers.SerializeHelper.ToHashEntries(System.Object)">
+            <summary>
+             Serialize in Redis format
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PaymentAPI.Helpers.SerializeHelper.ConvertFromRedis``1(StackExchange.Redis.HashEntry[])">
+            <summary>
+             Deserialize form Redis format
+            </summary>
+            <param name="hashEntries"></param>
+            <returns></returns>
+        </member>
         <member name="M:PaymentAPI.Helpers.ServiceException.#ctor(PaymentAPI.Helpers.ErrorDescriptor)">
             <param name="descriptor"></param>
         </member>
@@ -18,6 +47,42 @@
             </summary>
         </member>
         <member name="P:PaymentAPI.Models.Dto.ClaimEntity.RealName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:PaymentAPI.Tools.AuthHelper">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:PaymentAPI.Tools.AuthHelper.GetClaimFromToken(System.String)">
+            <summary>
+            从Claim获取UserId
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:PaymentAPI.Tools.AuthHelper.ClaimEntity">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:PaymentAPI.Tools.AuthHelper.ClaimEntity.Id">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:PaymentAPI.Tools.AuthHelper.ClaimEntity.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:PaymentAPI.Tools.AuthHelper.ClaimEntity.RealName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:PaymentAPI.Tools.AuthHelper.ClaimEntity.NickName">
             <summary>
             
             </summary>

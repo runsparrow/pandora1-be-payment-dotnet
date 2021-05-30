@@ -48,6 +48,8 @@ namespace PaymentAPI
             services.AddCorsSetup();
             services.AddSwaggerSetup();
             services.AddAuthorizationSetup();
+            services.AddHttpContextSetup();
+            services.AddRedisCacheSetup();
             services.AddWeChatPay();
             services.Configure<WeChatPayOptions>(Configuration.GetSection("WeChatPay"));
             services.AddControllers(options =>
