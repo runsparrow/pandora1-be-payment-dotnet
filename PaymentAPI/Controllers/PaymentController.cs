@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using PaymentAPI.Helpers;
 using PaymentAPI.Helpers.Redis;
 using PaymentAPI.Models.Dto;
@@ -82,18 +83,22 @@ namespace PaymentAPI.Controllers
                 {
                     if (notify.ResultCode == "SUCCESS")
                     {
-                        //PayModel dto = new PayModel();
-                        //RestRequest request = new RestRequest("/MIS/CMS/MemberAction/BuyMemberPower", Method.POST);
-                        //string token = _accessor.HttpContext.Request.Headers["Authorization"];
-                        //token = token.Replace("Bearer ", "");
-                        //dto.serialNo = notify.TransactionId;
-                        //dto.serialNo = notify.OutTradeNo;
-                        //dto.memberId = AuthHelper.GetClaimFromToken(token).Id;
-                        //dto.memberName = dto.ownerName = AuthHelper.GetClaimFromToken(token).Name;
-                        //_client.AddDefaultHeader("Authorization", "Bearer " + token);
-                        //request.AddJsonBody(dto);
-                        //var res = await _client.ExecuteAsync(request);
-                       string userToken= await _redisClient.GetValueAsync(notify.OutTradeNo);
+                        string userToken = await _redisClient.GetValueAsync(notify.OutTradeNo);
+                        PayModel dto = new PayModel();
+                        RestRequest request = new RestRequest("/MIS/CMS/MemberAction/BuyMemberPower", Method.POST);
+                        string token = userToken.Replace("\"", "");
+                        token = token.Replace("Bearer ", "");
+                        dto.serialNo = notify.TransactionId;
+                        dto.orderNo = notify.OutTradeNo;
+                        dto.dealAmount = Convert.ToDecimal(notify.TotalFee* 0.01) ;
+                        dto.createDateTime = dto.editDateTime = dto.dealDateTime = DateTime.Now.ToString();
+                        dto.payerId = AuthHelper.GetClaimFromToken(token).Id;
+                        dto.payerName = AuthHelper.GetClaimFromToken(token).Name;
+                        _client.AddDefaultHeader("Authorization", "Bearer " + token);
+                        string json = JsonConvert.SerializeObject(dto);
+                        request.AddJsonBody(dto);
+                        var res = await _client.ExecuteAsync(request);
+
 
                         _logger.LogInformation($"商户订单:{notify.OutTradeNo},支付成功");
                         return WeChatPayNotifyResult.Success;
