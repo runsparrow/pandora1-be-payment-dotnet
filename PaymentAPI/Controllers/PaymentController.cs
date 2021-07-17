@@ -48,7 +48,7 @@ namespace PaymentAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<FileStreamResult> Pay_By_WebChat(int amount,string content)
+        public async Task<FileStreamResult> Pay_By_WebChat(int amount,string content,string taocanId)
         {
             ClaimEntity user = TokenHelp.GetUserInfo(HttpContext.Request.Headers["Authorization"]);
             DateTime dt = DateTime.Now;
@@ -71,6 +71,7 @@ namespace PaymentAPI.Controllers
             int userId=AuthHelper.GetClaimFromToken(token).Id;
             await _redisClient.SetAsync(request.OutTradeNo, token,TimeSpan.FromMinutes(10));
             await _redisClient.SetAsync("pay_"+userId, 0, TimeSpan.FromMinutes(10));
+            await _redisClient.SetAsync("taocan_" + userId, taocanId, TimeSpan.FromMinutes(10));
             _logger.LogInformation($"用 户 ID:{user.Id},用户名:{user.Name}发起支付,二维码生成成功,商户订单:{request.OutTradeNo}");
             return File(new MemoryStream(ms.GetBuffer()), "image/jpeg", HttpUtility.UrlEncode("pay_pic", Encoding.GetEncoding("UTF-8")));
         }
@@ -88,11 +89,15 @@ namespace PaymentAPI.Controllers
                     if (notify.ResultCode == "SUCCESS")
                     {
                         string userToken = await _redisClient.GetValueAsync(notify.OutTradeNo);
+                      
                         userToken = userToken.Replace("\"", "");
                         userToken = userToken.Replace("Bearer ", "");
 
                         int userId = AuthHelper.GetClaimFromToken(userToken).Id;
                         await _redisClient.SetAsync("pay_" + userId, 1, TimeSpan.FromMinutes(10));
+
+                        string taocanId = await _redisClient.GetValueAsync("taocan_" + userId);
+
                         PayModel dto = new PayModel();
                         RestRequest request = new RestRequest("/MIS/CMS/MemberAction/BuyMemberPower", Method.POST);
                         string token = userToken.Replace("\"", "");
@@ -103,6 +108,7 @@ namespace PaymentAPI.Controllers
                         dto.createDateTime = dto.editDateTime = dto.dealDateTime = DateTime.Now.ToString();
                         dto.payerId = AuthHelper.GetClaimFromToken(token).Id;
                         dto.payerName = AuthHelper.GetClaimFromToken(token).Name;
+                        dto.memberPowerId = int.Parse(taocanId);
                         _client.AddDefaultHeader("Authorization", "Bearer " + token);
                         string json = JsonConvert.SerializeObject(dto);
                         request.AddJsonBody(dto);
