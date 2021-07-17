@@ -66,7 +66,11 @@ namespace PaymentAPI.Controllers
             MemoryStream ms = new MemoryStream();
             bitmap.Save(ms, ImageFormat.Jpeg);
             string token = _accessor.HttpContext.Request.Headers["Authorization"];
+            token = token.Replace("\"", "");
+            token = token.Replace("Bearer ", "");
+            int userId=AuthHelper.GetClaimFromToken(token).Id;
             await _redisClient.SetAsync(request.OutTradeNo, token,TimeSpan.FromMinutes(10));
+            await _redisClient.SetAsync("pay_"+userId, 0, TimeSpan.FromMinutes(10));
             _logger.LogInformation($"用 户 ID:{user.Id},用户名:{user.Name}发起支付,二维码生成成功,商户订单:{request.OutTradeNo}");
             return File(new MemoryStream(ms.GetBuffer()), "image/jpeg", HttpUtility.UrlEncode("pay_pic", Encoding.GetEncoding("UTF-8")));
         }
@@ -84,6 +88,11 @@ namespace PaymentAPI.Controllers
                     if (notify.ResultCode == "SUCCESS")
                     {
                         string userToken = await _redisClient.GetValueAsync(notify.OutTradeNo);
+                        userToken = userToken.Replace("\"", "");
+                        userToken = userToken.Replace("Bearer ", "");
+
+                        int userId = AuthHelper.GetClaimFromToken(userToken).Id;
+                        await _redisClient.SetAsync("pay_" + userId, 1, TimeSpan.FromMinutes(10));
                         PayModel dto = new PayModel();
                         RestRequest request = new RestRequest("/MIS/CMS/MemberAction/BuyMemberPower", Method.POST);
                         string token = userToken.Replace("\"", "");
@@ -110,6 +119,15 @@ namespace PaymentAPI.Controllers
             {
                 return NoContent();
             }
+        }
+
+
+        [HttpPost]
+        public async Task<bool> Get_PayStatus_ById()
+        {
+            ClaimEntity user = TokenHelp.GetUserInfo(HttpContext.Request.Headers["Authorization"]);
+            var result=await _redisClient.GetValueAsync("pay_" + user.Id);
+            return result=="1"?true:false;
         }
     }
 }
