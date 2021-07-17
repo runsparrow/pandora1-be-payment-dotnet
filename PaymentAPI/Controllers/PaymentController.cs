@@ -97,6 +97,7 @@ namespace PaymentAPI.Controllers
                         await _redisClient.SetAsync("pay_" + userId, 1, TimeSpan.FromMinutes(10));
 
                         string taocanId = await _redisClient.GetValueAsync("taocan_" + userId);
+                        taocanId = taocanId.Replace("\"", "");
 
                         PayModel dto = new PayModel();
                         RestRequest request = new RestRequest("/MIS/CMS/MemberAction/BuyMemberPower", Method.POST);
