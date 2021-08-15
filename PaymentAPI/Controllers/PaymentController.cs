@@ -88,6 +88,7 @@ namespace PaymentAPI.Controllers
                 {
                     if (notify.ResultCode == "SUCCESS")
                     {
+                        _logger.LogInformation($"商户订单进来了");
                         string userToken = await _redisClient.GetValueAsync(notify.OutTradeNo);
                       
                         userToken = userToken.Replace("\"", "");
