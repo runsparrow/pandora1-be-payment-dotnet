@@ -88,7 +88,7 @@ namespace PaymentAPI.Controllers
                 {
                     if (notify.ResultCode == "SUCCESS")
                     {
-                        _logger.LogInformation($"商户订单进来了");
+                        
                         string userToken = await _redisClient.GetValueAsync(notify.OutTradeNo);
                       
                         userToken = userToken.Replace("\"", "");
@@ -101,6 +101,7 @@ namespace PaymentAPI.Controllers
                         taocanId = taocanId.Replace("\"", "");
 
                         PayModel dto = new PayModel();
+                        _logger.LogInformation($"商户订单进来了");
                         RestRequest request = new RestRequest("/MIS/CMS/MemberAction/BuyMemberPower", Method.POST);
                         string token = userToken.Replace("\"", "");
                         token = token.Replace("Bearer ", "");
@@ -114,7 +115,17 @@ namespace PaymentAPI.Controllers
                         _client.AddDefaultHeader("Authorization", "Bearer " + token);
                         string json = JsonConvert.SerializeObject(dto);
                         request.AddJsonBody(dto);
-                        var res = await _client.ExecuteAsync(request);
+                        _logger.LogInformation($"开始请求");
+                        try
+                        {
+                            var res = await _client.ExecuteAsync(request);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogInformation($"出现异常"+ex.Message);
+                            throw ex;
+                        }
+                        
 
 
                         _logger.LogInformation($"商户订单:{notify.OutTradeNo},支付成功");
