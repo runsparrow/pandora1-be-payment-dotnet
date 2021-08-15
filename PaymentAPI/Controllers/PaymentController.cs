@@ -93,13 +93,10 @@ namespace PaymentAPI.Controllers
                       
                         userToken = userToken.Replace("\"", "");
                         userToken = userToken.Replace("Bearer ", "");
-                        _logger.LogInformation($"商户订单进来了");
                         int userId = AuthHelper.GetClaimFromToken(userToken).Id;
                         await _redisClient.SetAsync("pay_" + userId, 1, TimeSpan.FromMinutes(10));
-                        _logger.LogInformation($"开始请求1111");
                         string taocanId = await _redisClient.GetValueAsync("taocan_" + userId);
                         taocanId = taocanId.Replace("\"", "");
-                        _logger.LogInformation($"开始请求222222");
 
                         PayModel dto = new PayModel();
                        
