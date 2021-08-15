@@ -25,7 +25,7 @@ namespace PaymentAPI.Controllers
     [ApiController]
     [ApiExplorerSettings(GroupName = "pay")]
     [Route("v1/api/[Controller]/[action]")]
-    //[Authorize]
+    [Authorize]
     public class PaymentController : ControllerBase
     {
         private readonly ILogger<PaymentController> _logger;
