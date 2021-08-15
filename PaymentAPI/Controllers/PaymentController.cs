@@ -88,18 +88,18 @@ namespace PaymentAPI.Controllers
                 {
                     if (notify.ResultCode == "SUCCESS")
                     {
+                        
                         string userToken = await _redisClient.GetValueAsync(notify.OutTradeNo);
                       
                         userToken = userToken.Replace("\"", "");
                         userToken = userToken.Replace("Bearer ", "");
-
                         int userId = AuthHelper.GetClaimFromToken(userToken).Id;
                         await _redisClient.SetAsync("pay_" + userId, 1, TimeSpan.FromMinutes(10));
-
                         string taocanId = await _redisClient.GetValueAsync("taocan_" + userId);
                         taocanId = taocanId.Replace("\"", "");
 
                         PayModel dto = new PayModel();
+                       
                         RestRequest request = new RestRequest("/MIS/CMS/MemberAction/BuyMemberPower", Method.POST);
                         string token = userToken.Replace("\"", "");
                         token = token.Replace("Bearer ", "");
@@ -114,8 +114,6 @@ namespace PaymentAPI.Controllers
                         string json = JsonConvert.SerializeObject(dto);
                         request.AddJsonBody(dto);
                         var res = await _client.ExecuteAsync(request);
-
-
                         _logger.LogInformation($"商户订单:{notify.OutTradeNo},支付成功");
                         return WeChatPayNotifyResult.Success;
                     }
