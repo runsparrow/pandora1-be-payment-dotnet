@@ -31,5 +31,6 @@ namespace PaymentAPI.Models.Dto
         public string statusName { get; set; } = "";
         public int statusValue { get; set; } = 0;
         public int memberPowerId { get; set; } = 0;
+        public string memberPowerName { get; set; } = "";
     }
 }
